@@ -35,7 +35,7 @@ const queryAll = (row_count = 5, page = 0) => {
     })
 };
 
-queryAll();
+// queryAll();
 
 // query for specific product and details
 
@@ -50,7 +50,7 @@ const queryOne = (product_id) => {
     });
 };
 
-queryOne(1);
+// queryOne(1);
 
 // write query to just return all details and features for one product
 
@@ -69,7 +69,7 @@ const queryFeatures = (product_id) => {
     });
 };
 
-queryFeatures(1);
+// queryFeatures(1);
 
 // const queryStyles = (product_id) => {
 //   pool.connect()
@@ -95,7 +95,7 @@ const queryRelated = (product_id) => {
         from related where current_product_id
         = ${product_id};`)
     .then((results) => {
-      console.log(results.rows);
+      console.log(results.rows[0].json_agg);
     })
     .catch((err) => {
       console.error(err);
@@ -103,3 +103,5 @@ const queryRelated = (product_id) => {
 };
 
 queryRelated(1);
+
+pool.end();
