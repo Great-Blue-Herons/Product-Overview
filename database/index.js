@@ -108,7 +108,7 @@ const queryRelated = (product_id) => {
 
 // query product with features async
 
-const findFeatures = (product_id) => {
+const asyncFindFeatures = (product_id) => {
   var obj = {};
   ; (async () => {
     obj = await queryOne(product_id);
@@ -120,5 +120,8 @@ const findFeatures = (product_id) => {
 pool.end();
 
 module.exports = {
-
-}
+  queryWithFeatures: queryWithFeatures,
+  queryStyles: queryStyles,
+  queryRelated: queryRelated,
+  asyncFindFeatures: asyncFindFeatures
+};
