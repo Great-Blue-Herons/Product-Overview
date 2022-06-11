@@ -11,9 +11,11 @@ const {
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 
-app.get('/products/(id)', (req, res) => {
-  getOneProduct(req.query.id)
+app.get('/products/:product_id', (req, res) => {
+  console.log(req.params);
+  getOneProduct(req.params.product_id)
     .then((product) => {
+      console.log(product);
       res.send(product);
     })
     .catch((err) => {
@@ -21,7 +23,7 @@ app.get('/products/(id)', (req, res) => {
     });
 });
 
-app.get('/products/(id)/styles', (req, res) => {
+app.get('/products/:product_id/styles', (req, res) => {
   getStyles(req.query.id)
     .then((styles) => {
       res.send(styles);
@@ -31,8 +33,8 @@ app.get('/products/(id)/styles', (req, res) => {
     });
 });
 
-app.get('/products/(id)/related', (req, res) => {
-  getRelated(req.query.id)
+app.get('/products/:product_id/related', (req, res) => {
+  getRelated(req.query.product_id)
     .then((related) => {
       res.send(related);
     })
@@ -41,6 +43,6 @@ app.get('/products/(id)/related', (req, res) => {
     });
 });
 
-app.list(process.env.SERVER_PORT, () => {
-  console.log(`listening on port ${SERVER_PORT}`);
+app.listen(process.env.SERVER_PORT, () => {
+  console.log(`listening on port ${process.env.SERVER_PORT}`);
 });
