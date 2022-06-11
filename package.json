@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "nodemon --watch server 'server/'"
+    "start": "nodemon --watch server './server/'"
   },
   "dependencies": {
     "axios": "^0.27.2",

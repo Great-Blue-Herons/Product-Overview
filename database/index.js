@@ -13,7 +13,7 @@ const pool = new Pool({
 const queryWithFeatures = (product_id) => {
   return pool.connect()
     .then((client) => {
-      client.query(`select json_build_object(
+      return client.query(`select json_build_object(
       'id', a.id,
       'name', a.name,
       'slogan', a.slogan,
@@ -31,20 +31,23 @@ const queryWithFeatures = (product_id) => {
     from all_products a
     where a.id = ${product_id};`)
         .then((results) => {
-          return results.rows;
-        })
-        .catch((err) => {
-          return err;
+          client.release();
+          return results.rows[0];
         });
+    })
+    .catch((err) => {
+      client.release();
+      return err;
     });
 };
 
 // query all styles for one product
 
 const queryStyles = (product_id) => {
+  console.log(`querystyles productid: ${product_id}`);
   return pool.connect()
     .then((client) => {
-      client.query(`select json_build_object(
+      return client.query(`select json_build_object(
       'product_id', al.id,
       'results', (
         select json_agg(json_build_object(
@@ -73,38 +76,39 @@ const queryStyles = (product_id) => {
            from styles st
            where st.productid = al.id
            )
-           ) as result
+           )
            from all_products al
            where al.id = ${product_id};`)
         .then((results) => {
           client.release();
-          return results.rows;
+          return results.rows[0].json_build_object;
         })
         .catch((err) => {
+          console.log('error');
+          console.log(err);
           client.release();
           return err;
         });
-    });
-};
+    })
 
+}
 // query all products related to one specific product
 
 const queryRelated = (product_id) => {
   return pool.connect()
     .then((client) => {
-      client.query(`select json_agg(related_product_id)
+      return client.query(`select json_agg(related_product_id)
     from related where current_product_id
     = ${product_id};`)
         .then((results) => {
           client.release();
-          return results.rows;
+          return results.rows[0].json_agg;
         })
         .catch((err) => {
           client.release();
           return err;
         });
     });
-
 };
 
 // query product with features async

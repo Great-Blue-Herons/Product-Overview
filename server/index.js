@@ -12,10 +12,8 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('/products/:product_id', (req, res) => {
-  console.log(req.params);
   getOneProduct(req.params.product_id)
     .then((product) => {
-      console.log(product);
       res.send(product);
     })
     .catch((err) => {
@@ -24,8 +22,10 @@ app.get('/products/:product_id', (req, res) => {
 });
 
 app.get('/products/:product_id/styles', (req, res) => {
-  getStyles(req.query.id)
+  getStyles(req.params.product_id)
     .then((styles) => {
+      console.log('server index');
+      console.log(styles);
       res.send(styles);
     })
     .catch((err) => {
@@ -34,7 +34,7 @@ app.get('/products/:product_id/styles', (req, res) => {
 });
 
 app.get('/products/:product_id/related', (req, res) => {
-  getRelated(req.query.product_id)
+  getRelated(req.params.product_id)
     .then((related) => {
       res.send(related);
     })
