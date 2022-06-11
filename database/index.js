@@ -8,20 +8,12 @@ const pool = new Pool({
   database: process.env.DATABASE
 });
 
-// pool.connect()
-//   .then(() => {
-//     console.log('Connected successfully');
-//   })
-//   .catch((err) => {
-//     console.error(err)
-//   });
-
-
 // query one product with feature details
 
 const queryWithFeatures = (product_id) => {
-  return pool
-    .query(`select json_build_object(
+  return pool.connect()
+    .then((client) => {
+      client.query(`select json_build_object(
       'id', a.id,
       'name', a.name,
       'slogan', a.slogan,
@@ -38,72 +30,81 @@ const queryWithFeatures = (product_id) => {
     ) as result
     from all_products a
     where a.id = ${product_id};`)
-    .then((results) => {
-      console.log(results.rows);
-    })
-    .catch((err) => {
-      console.error(err);
+        .then((results) => {
+          return results.rows;
+        })
+        .catch((err) => {
+          return err;
+        });
     });
 };
 
 // query all styles for one product
 
 const queryStyles = (product_id) => {
-  return pool
-    .query(`select json_build_object(
-          'product_id', al.id,
-          'results', (
-              select json_agg(json_build_object(
+  return pool.connect()
+    .then((client) => {
+      client.query(`select json_build_object(
+      'product_id', al.id,
+      'results', (
+        select json_agg(json_build_object(
           'style_id', st.id,
           'name', st.name,
           'original_price', st.original_price,
           'sale_price', st.sale_price,
           'default?', st.default_style,
           'photos', (
-              select json_agg(json_build_object(
-                  'thumbnail_url', ph.thumbnail_url,
-                  'url', ph.url
+            select json_agg(json_build_object(
+              'thumbnail_url', ph.thumbnail_url,
+              'url', ph.url
               ))
               from photos ph where ph.styleid = st.id),
-          'skus', (
-              select json_object_agg(
+              'skus', (
+                select json_object_agg(
                   sk.id, (select json_build_object(
-                      'quantity', sk.quantity,
-                      'size', sk.size)
-              from skus where "id" = sk.id)
+                    'quantity', sk.quantity,
+                    'size', sk.size)
+                    from skus where "id" = sk.id)
               )
            from skus as sk where "styleid" = st.id
            )
-      ))
-      as result
-      from styles st
-      where st.productid = al.id
-
-          )
-      ) as result
-      from all_products al
-      where al.id = ${product_id};`)
-    .then((results) => {
-      return results.rows;
-    })
-    .catch((err) => {
-      console.error(err);
+           ))
+           as result
+           from styles st
+           where st.productid = al.id
+           )
+           ) as result
+           from all_products al
+           where al.id = ${product_id};`)
+        .then((results) => {
+          client.release();
+          return results.rows;
+        })
+        .catch((err) => {
+          client.release();
+          return err;
+        });
     });
 };
 
 // query all products related to one specific product
 
 const queryRelated = (product_id) => {
-  return pool
-    .query(`select json_agg(related_product_id)
-        from related where current_product_id
-        = ${product_id};`)
-    .then((results) => {
-      return results.rows;
-    })
-    .catch((err) => {
-      console.error(err);
+  return pool.connect()
+    .then((client) => {
+      client.query(`select json_agg(related_product_id)
+    from related where current_product_id
+    = ${product_id};`)
+        .then((results) => {
+          client.release();
+          return results.rows;
+        })
+        .catch((err) => {
+          client.release();
+          return err;
+        });
     });
+
 };
 
 // query product with features async
@@ -117,7 +118,6 @@ const asyncFindFeatures = (product_id) => {
   })()
 };
 
-pool.end();
 
 module.exports = {
   queryWithFeatures: queryWithFeatures,
