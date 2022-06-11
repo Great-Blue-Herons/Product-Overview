@@ -23,3 +23,9 @@ let getStyles = (product_id) => {
 let getRelated = (product_id) => {
   return queryRelated(product_id);
 };
+
+module.exports = {
+  getOneProduct: getOneProduct,
+  getStyles: getStyles,
+  getRelated: getRelated
+};
