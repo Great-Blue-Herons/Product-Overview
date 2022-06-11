@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "start": "nodemon --watch server 'server/'"
+  },
   "dependencies": {
     "axios": "^0.27.2",
     "bluebird": "^3.7.2",
