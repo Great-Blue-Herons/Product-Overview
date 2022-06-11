@@ -17,60 +17,10 @@ const pool = new Pool({
 //   });
 
 
-// query for all products (based on page and count)
-
-const queryAll = (row_count = 5, page = 0) => {
-  if (page > 0) {
-    page = page - 1;
-  };
-  pool
-    .query(`select * from all_products limit ${row_count} offset ${page * row_count};`)
-    .then((results) => {
-      console.log(results.rows);
-    })
-    .catch((err) => {
-      console.error(err)
-    })
-};
-
-// queryAll();
-
-// query for specific product and details
-
-const queryOne = (product_id) => {
-  return pool
-    .query(`select * from all_products where id = ${product_id};`)
-    .then((result) => {
-      // console.log(result.rows);
-      return result.rows[0];
-    })
-    .catch((err) => {
-      console.error(err);
-    });
-  // console.log(allInfo);
-};
-
-// queryOne(1);
-
-// write query to just return all details and features for one product
-
-const queryFeatures = (product_id) => {
-  return pool
-    .query(`select feature, value from features where product_id = ${product_id};`)
-    .then((results) => {
-      return results.rows;
-    })
-    .catch((err) => {
-      console.error(err);
-    });
-};
-
-// queryFeatures(2);
-
-// query one product with features
+// query one product with feature details
 
 const queryWithFeatures = (product_id) => {
-  pool.connect()
+  return pool
     .query(`select json_build_object(
       'id', a.id,
       'name', a.name,
@@ -96,13 +46,11 @@ const queryWithFeatures = (product_id) => {
     });
 };
 
-// queryWithFeatures(1);
-
 // query all styles for one product
 
 const queryStyles = (product_id) => {
-    return pool
-        .query(`select json_build_object(
+  return pool
+    .query(`select json_build_object(
           'product_id', al.id,
           'results', (
               select json_agg(json_build_object(
@@ -135,15 +83,15 @@ const queryStyles = (product_id) => {
       ) as result
       from all_products al
       where al.id = ${product_id};`)
-        .then((results) => {
-          console.log(results.rows);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
+    .then((results) => {
+      return results.rows;
+    })
+    .catch((err) => {
+      console.error(err);
+    });
 };
 
-queryStyles(1);
+// query all products related to one specific product
 
 const queryRelated = (product_id) => {
   return pool
@@ -151,18 +99,14 @@ const queryRelated = (product_id) => {
         from related where current_product_id
         = ${product_id};`)
     .then((results) => {
-      console.log(results.rows);
+      return results.rows;
     })
     .catch((err) => {
       console.error(err);
     });
 };
 
-// queryRelated(1);
-
-
-
-// features async
+// query product with features async
 
 const findFeatures = (product_id) => {
   var obj = {};
@@ -173,6 +117,8 @@ const findFeatures = (product_id) => {
   })()
 };
 
-// findFeatures(1);
-
 pool.end();
+
+module.exports = {
+
+}
