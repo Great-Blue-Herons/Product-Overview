@@ -17,7 +17,7 @@
   "scripts": {
     "start": "nodemon --watch server './server/'",
     "short": "k6 run script.js",
-    "long": "k6 run --vus 1000 --duration 30s script.js"
+    "long": "k6 run --vus 100 --duration 30s script.js"
   },
   "dependencies": {
     "axios": "^0.27.2",
