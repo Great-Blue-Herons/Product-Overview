@@ -14,5 +14,20 @@
   "devDependencies": {
     "jest": "^28.1.1",
     "nodemon": "^2.0.16"
-  }
+  },
+  "name": "product-overview",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Great-Blue-Herons/Product-Overview.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Great-Blue-Herons/Product-Overview/issues"
+  },
+  "homepage": "https://github.com/Great-Blue-Herons/Product-Overview#readme"
 }
