@@ -4,31 +4,37 @@ import { check, sleep } from 'k6';
 
 export const options = {
   stages: [
-    { duration: '30s', target: 20 },
-    // { duration: '1m30s', target: 10 },
-    { duration: '20s', target: 0 },
+   { duration: '10s', target: 500 }, // below normal load
+   { duration: '10s', target: 100 },
+   { duration: '10s', target: 1000 }, // spike to 1400 users
+   { duration: '1m', target: 1000 }, // stay at 1400 for 3 minutes
+   { duration: '10s', target: 100 }, // scale down. Recovery stage.
+   { duration: '10s', target: 0 },
   ],
-};
+ };
 
 export default function () {
-  let id = 9;
-  const product = {
+  var id = 1000011;
+  for (var i = 1000011; i > (1000011 * .9); i --) {
+    id = i;
+  }
+  const main = {
     method: 'get',
     url: `http://localhost:3000/products/${id}`
   };
-  const styles = {
-    method: 'get',
-    url: `http://localhost:3000/products/${id}/styles`
-  };
-  const related = {
-    method: 'get',
-    url: `http://localhost:3000/products/${id}/related`
-  };
+  // const main = {
+  //   method: 'get',
+  //   url: `http://localhost:3000/products/${id}/styles`
+  // };
+  // const main = {
+  //   method: 'get',
+  //   url: `http://localhost:3000/products/${id}/related`
+  // };
 
-  const res = http.batch([product, styles, related]);
+  const res = http.batch([main]);
 
   check(res[0], {
-    'main product status was 200': (r) => r.status === 200,
+    'main status was 200': (r) => r.status === 200,
   });
-  // sleep(1);
+  sleep(2);
 };
