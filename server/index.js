@@ -24,8 +24,6 @@ app.get('/products/:product_id', (req, res) => {
 app.get('/products/:product_id/styles', (req, res) => {
   getStyles(req.params.product_id)
     .then((styles) => {
-      console.log('server index');
-      console.log(styles);
       res.send(styles);
     })
     .catch((err) => {

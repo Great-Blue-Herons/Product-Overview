@@ -44,7 +44,6 @@ const queryWithFeatures = (product_id) => {
 // query all styles for one product
 
 const queryStyles = (product_id) => {
-  console.log(`querystyles productid: ${product_id}`);
   return pool.connect()
     .then((client) => {
       return client.query(`select json_build_object(
@@ -84,8 +83,6 @@ const queryStyles = (product_id) => {
           return results.rows[0].json_build_object;
         })
         .catch((err) => {
-          console.log('error');
-          console.log(err);
           client.release();
           return err;
         });
@@ -113,19 +110,19 @@ const queryRelated = (product_id) => {
 
 // query product with features async
 
-const asyncFindFeatures = (product_id) => {
-  var obj = {};
-  ; (async () => {
-    obj = await queryOne(product_id);
-    obj.features = await queryFeatures(product_id);
-    await console.log(obj);
-  })()
-};
+// const asyncFindFeatures = (product_id) => {
+//   var obj = {};
+//   ; (async () => {
+//     obj = await queryOne(product_id);
+//     obj.features = await queryFeatures(product_id);
+
+//   })()
+// };
 
 
 module.exports = {
   queryWithFeatures: queryWithFeatures,
   queryStyles: queryStyles,
-  queryRelated: queryRelated,
-  asyncFindFeatures: asyncFindFeatures
+  queryRelated: queryRelated
+  // asyncFindFeatures: asyncFindFeatures
 };
